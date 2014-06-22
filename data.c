@@ -219,10 +219,22 @@ void list_object_info(objectBase *objectdb)
 
 }
 
+void load_config_file(const char *configfile, playerType *config)
+{
+	FILE *fp = NULL;
+	if( (fp = fopen(configfile, "r")) == NULL )
+		throw_error("could not load config file");
+	
+	char id_buffer[LINE_BUFFER_SIZE] = { 0 };
+	fscanf(fp, "default:%s", id_buffer);
+	printf("Default room set to ID \"%s\"\n", id_buffer);
+}
+
 int main()
 {
 	roomBase rooms;
 	objectBase objects;
+	playerType player;
 	load_map_file("datafiles/map.data", &rooms);
 	//list_room_objects(&(rooms.rooms[0]));
 	//list_room_dependency_objects(&(rooms.rooms[1]));
@@ -230,6 +242,7 @@ int main()
 	list_room_info(&rooms);
 	load_objects_file("datafiles/objects.data", &objects);
 	list_object_info(&objects);
+	load_config_file("datafiles/config.data", &player);
 	
 	return 0;
 }

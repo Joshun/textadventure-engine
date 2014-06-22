@@ -33,3 +33,11 @@ typedef struct {
 	objectType objects[MAX_OBJECTS];
 } objectBase;
 
+enum coordinates { X_COORDINATE, Y_COORDINATE };
+
+typedef struct {
+	char starting_room_id[ID_LENGTH]; /* ID of room in which the player will start */
+	enum coordinates location[2]; /* The player's x and y coordinates (determining the current room) */
+	char inventory[MAX_OBJECTS][ID_LENGTH]; /* Player inventory */
+	int gold; /* Amount of money player has */
+} playerType;
