@@ -1,2 +1,3 @@
-KEY|Key|An old rusty key
-LIGHT|Light switch|Turns light on and off
+KEY|Key|An old rusty key|1|ULOCK|KTCHN
+LIGHT|Light switch|Turns light on and off|0|0|0
+SPIGT|Spigot|A tap for a barrel|1|0|0
