@@ -5,3 +5,7 @@ void list_room_objects(roomType *room, objectBase *objectdb);
 roomType *get_room_from_id(const char *room_id, roomBase *roomdb);
 roomType *get_room_from_coordinates(int coordinates[2], roomBase *roomdb);
 objectType *get_object_from_id(const char *object_id, objectBase *objectdb);
+objectType *get_object_from_name(const char *object_name, objectBase *objectdb);
+int object_in_room(objectType *object, roomType *room);
+int object_in_inventory(objectType *object, playerType *player);
+void remove_object_from_room(objectType *object, roomType *room);

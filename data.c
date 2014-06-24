@@ -229,6 +229,63 @@ objectType *get_object_from_id(const char *object_id, objectBase *objectdb)
 	}
 	return NULL;
 }
+
+objectType *get_object_from_name(const char *object_name, objectBase *objectdb)
+{
+	int i;
+	for(i=0; i<objectdb->nobjects; i++)
+	{
+		if( (strcmp(objectdb->objects[i].name, object_name)) == 0 ) {
+			//printf("Room \"%s\" found\n", room_id);
+			return &(objectdb->objects[i]);
+		}
+	}
+	return NULL;
+}
+
+int object_in_room(objectType *object, roomType *room)
+{
+	int i;
+	for(i=0; i<room->n_object_ids; i++)
+	{
+		if( strcmp(room->object_ids[i], object->id) == 0)
+			return 1;
+	}
+	return 0;
+}
+
+int object_in_inventory(objectType *object, playerType *player)
+{
+	int i;
+	for(i=0; i<player->n_object_ids; i++)
+	{
+		if( strcmp(player->inventory[i], object->id) == 0)
+			return 1;
+	}
+	return 0;
+}
+
+void remove_object_from_room(objectType *object, roomType *room)
+{
+	if( object_in_room(object, room) )
+	{
+		int i, j;
+		for(i=0; i<room->n_object_ids; i++)
+		{
+			if( strcmp(room->object_ids[i], object->id) == 0)
+			{
+				//printf("Removing object with id: %s\n", room->object_ids[i]);
+				for(j=i; (j+1)<room->n_object_ids; j++) {
+					printf("ID: %s\n", room->object_ids[j]);
+					strncpy(room->object_ids[j], room->object_ids[j+1], ID_LENGTH);
+				}
+				room->n_object_ids -= 1;
+				return;
+			}
+		}
+	}
+}
+
 void list_object_info(objectBase *objectdb)
 {
 	int i;
@@ -241,6 +298,7 @@ void list_object_info(objectBase *objectdb)
 	printf("=====END OF OBJECTS LISTING=====\n");
 
 }
+
 
 void load_config_file(const char *configfile, playerType *config)
 {
