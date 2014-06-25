@@ -3,7 +3,7 @@ Format for datafiles
 
 map.data
 --------
-room ID | room coordinates | room objects, comma separated | locked status
+room ID | room coordinates | room objects | locked status
 
 rooms.data
 ----------
@@ -17,3 +17,9 @@ config.data
 -----------
 sroom:<starting room>
 prompt:<default prompt>
+
+NOTES
+-----
+-Room objects are comma separated
+-Object names MUST be lowercase
+-Room and object IDs are limited to 5 characters and must be unique
