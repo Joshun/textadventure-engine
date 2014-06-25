@@ -16,6 +16,8 @@ void take_object(const char *object_name, playerType *player, objectBase *object
 void no_entry(void);
 void examine_object(char *object_name, playerType *player, objectBase *objectdb);
 
+void use_object(char *object_name, playerType *player, objectBase *objectdb, roomBase *roomdb);
+
 void start_game(playerType *player, roomBase *roomdb, objectBase *objectdb)
 {
 	player->quit = 0;
@@ -54,6 +56,9 @@ void start_game(playerType *player, roomBase *roomdb, objectBase *objectdb)
 		}
 		else if( COMP_STR(input_command, "take" ) ) {
 			take_object(input_parameter, player, objectdb);
+		}
+		else if( COMP_STR(input_command, "use" ) ) {
+			use_object(input_parameter, player, objectdb, roomdb);
 		}
 		else if( COMP_STR(input_command, "north" ) ) {
 			test_coordinates[0] = player->coordinates[0];
@@ -215,3 +220,44 @@ void examine_object(char *object_name, playerType *player, objectBase *objectdb)
 		printf("There is no such object\n");
 	}
 }
+
+void unlock_room(char *room_id, roomBase *roomdb)
+{
+	roomType *temp_room = get_room_from_id(room_id, roomdb);
+	if( temp_room )
+		temp_room->locked = 0;
+	else
+		printf("Error: room with ID \"%s\" could not be found\n", room_id);
+}
+
+void use_object(char *object_name, playerType *player, objectBase *objectdb, roomBase *roomdb)
+{
+	if( strlen(object_name) < 1 ) {
+		printf("Use what?\n");
+		return;
+	}
+	
+	objectType *temp_object = get_object_from_name(object_name, objectdb);
+	
+	if( temp_object == NULL ) {
+		printf("There is no such object\n");
+		return;
+	}
+	else if( object_in_inventory(temp_object, player) ) {
+		if( temp_object->action[0] == '0' ) {
+			printf("Nothing happens.\n");
+		}
+		else if( COMP_STR(temp_object->action, "ULOCK") ) {
+			printf("The %s is now accessible.\n", player->current_room->name);
+			unlock_room(temp_object->action_parameter, roomdb);
+		}
+		else {
+			printf("Error: invalid object action \"%s\"\n", temp_object->action);
+		}
+	}
+	else {
+		printf("You do not have the %s.\n", object_name);
+	}
+	
+}
+	
