@@ -302,6 +302,7 @@ void list_object_info(objectBase *objectdb)
 
 void load_config_file(const char *configfile, playerType *config)
 {
+	extern int debug;
 	FILE *fp = NULL;
 	if( (fp = fopen(configfile, "r")) == NULL )
 		throw_error("could not load config file");
@@ -316,34 +317,16 @@ void load_config_file(const char *configfile, playerType *config)
 	while( fgets(line_buffer, LINE_BUFFER_SIZE, fp) != NULL ) {
 		sscanf(line_buffer, "%[^:]:%[^\n]", param1, param2);
 		if( strcmp(param1, "sroom") == 0) {
-			printf("Setting default room to \"%s\"\n", param2);
+			if(debug) printf("Setting default room to \"%s\"\n", param2);
 			strncpy(config->starting_room_id, param2, ID_LENGTH);
 		}
 		if( strcmp(param1, "prompt") == 0) {
-			printf("Setting default prompt to \"%s\"\n", param2);
+			if(debug) printf("Setting default prompt to \"%s\"\n", param2);
 			strncpy(config->prompt, param2, PROMPT_LENGTH);
-			printf("Prompt: %s\n", config->prompt);
+			if(debug) printf("Prompt: %s\n", config->prompt);
 		}
 		memset(param1, '\0', LINE_BUFFER_SIZE);
 		memset(param2, '\0', LINE_BUFFER_SIZE);
 	}
 	fclose(fp);
-}
-
-int main()
-{
-	roomBase rooms;
-	objectBase objects;
-	playerType player;
-	load_map_file("datafiles/map.data", &rooms);
-	//list_room_objects(&(rooms.rooms[0]));
-	//list_room_dependency_objects(&(rooms.rooms[1]));
-	load_rooms_file("datafiles/rooms.data", &rooms);
-	list_room_info(&rooms);
-	load_objects_file("datafiles/objects.data", &objects);
-	list_object_info(&objects);
-	load_config_file("datafiles/config.data", &player);
-	start_game(&player, &rooms, &objects);
-	
-	return 0;
 }

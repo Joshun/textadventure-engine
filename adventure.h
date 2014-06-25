@@ -8,6 +8,10 @@
 #define PROMPT_LENGTH 50
 #define INPUT_LENGTH 50
 
+#define COMP_STR(str1, str2) ( strcmp(str1, str2) == 0 )
+#define CLR_BUFF(buffer) ( memset(buffer, '\0', sizeof(buffer)) )
+#define COMMANDS_LIST "look inventory exit quit"
+
 typedef struct {
 	char id[ID_LENGTH];
 	char name[NAME_LENGTH];
@@ -50,3 +54,5 @@ typedef struct {
 	int n_object_ids;
 	int gold; /* Amount of money player has */
 } playerType;
+
+int debug;
