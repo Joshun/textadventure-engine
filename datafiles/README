@@ -1,0 +1,19 @@
+Format for datafiles
+====================
+
+map.data
+--------
+room ID | room coordinates | room objects, comma separated | locked status
+
+rooms.data
+----------
+room ID | room name | room description
+
+objects.data
+------------
+object ID | object name | object description
+
+config.data
+-----------
+sroom:<starting room>
+prompt:<default prompt>
