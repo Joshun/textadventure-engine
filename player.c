@@ -164,6 +164,11 @@ void no_entry(void)
 
 void take_object(const char *object_name, playerType *player, objectBase *objectdb)
 {
+	if( strlen(object_name) < 1) {
+		printf("Take what?\n");
+		return;
+	}
+	
 	objectType *temp_object = get_object_from_name(object_name, objectdb);
 	if( temp_object == NULL )
 	{
@@ -179,7 +184,7 @@ void take_object(const char *object_name, playerType *player, objectBase *object
 		printf("You cannot pick up the %s\n", object_name);
 	}
 	else {
-		printf("You take the %s\n", temp_object->name);
+		printf("You take the %s\n", object_name);
 		strncpy(player->inventory[player->n_object_ids], temp_object->id, ID_LENGTH);
 		player->n_object_ids += 1;
 		remove_object_from_room(temp_object, player->current_room);

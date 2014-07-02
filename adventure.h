@@ -55,4 +55,10 @@ typedef struct {
 	int gold; /* Amount of money player has */
 } playerType;
 
+typedef struct {
+	char name[NAME_LENGTH];
+	int health;
+	int damage;
+} enemyType;
+
 int debug;

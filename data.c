@@ -276,7 +276,7 @@ void remove_object_from_room(objectType *object, roomType *room)
 			{
 				//printf("Removing object with id: %s\n", room->object_ids[i]);
 				for(j=i; (j+1)<room->n_object_ids; j++) {
-					printf("ID: %s\n", room->object_ids[j]);
+					//printf("ID: %s\n", room->object_ids[j]);
 					strncpy(room->object_ids[j], room->object_ids[j+1], ID_LENGTH);
 				}
 				room->n_object_ids -= 1;
