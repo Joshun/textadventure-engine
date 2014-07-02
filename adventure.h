@@ -63,3 +63,5 @@ typedef struct {
 } enemyType;
 
 int debug;
+
+void throw_error(const char *error_str);

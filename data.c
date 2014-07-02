@@ -7,17 +7,10 @@
 #define LINE_BUFFER_SIZE 1000
 #define LINE_SEPARATOR "|"
 
-void throw_error(const char *error_str);
 void load_map_file(const char *mapfile, roomBase roomdb[MAX_ROOMS]);
 void tokenise_room_objects(char *str, roomType *room);
 void tokenise_room_dependency_objects(char *str, roomType *room);
 roomType *get_room_from_coordinates(int coordinates[2], roomBase *roomdb);
-
-void throw_error(const char *error_str)
-{
-	printf("Error: %s\n", error_str);
-	exit(EXIT_FAILURE);
-}
 
 void tokenise_room_objects(char *str, roomType *room)
 {

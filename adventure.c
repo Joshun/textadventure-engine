@@ -9,6 +9,12 @@
 
 #define PATH_BUF_SIZE 100
 
+void throw_error(const char *error_str)
+{
+	printf("Error: %s\n", error_str);
+	exit(EXIT_FAILURE);
+}
+
 void parse_args(int argc, char **argv, char *dpathbuf)
 {
 	debug = 0;
@@ -25,8 +31,7 @@ void parse_args(int argc, char **argv, char *dpathbuf)
 				strncpy(dpathbuf, argv[i+1], PATH_BUF_SIZE);
 			}
 			else {
-				printf("Error: path location invalid\n");
-				exit(EXIT_FAILURE);
+				throw_error("path location invalid");
 			}
 		}
 	}
@@ -37,8 +42,7 @@ int main(int argc, char **argv)
 	parse_args(argc, argv, datapath_buffer);
 	if( strlen(datapath_buffer) > 0 ) {
 		if( chdir(datapath_buffer) == -1 ) {
-			printf("Error: data path does not exist\n");
-			exit(EXIT_FAILURE);
+			throw_error("data path does not exist");
 		}
 	}
 	
