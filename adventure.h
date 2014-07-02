@@ -19,6 +19,7 @@ typedef struct {
 	char action[ID_LENGTH]; /* What to do when object is used */
 	char action_parameter[ID_LENGTH];
 	int removeable;
+	int hitpoints; /* Amount of damage object does each turn when fighting an enemy */
 } objectType;
 
 typedef struct {

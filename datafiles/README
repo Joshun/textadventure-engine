@@ -11,7 +11,7 @@ room ID | room name | room description
 
 objects.data
 ------------
-object ID | object name | object description | object action | action parameter
+object ID | object name | object description | object hitpoints | object action | action parameter
 
 config.data
 -----------

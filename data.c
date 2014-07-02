@@ -191,11 +191,12 @@ void load_objects_file(const char *objectsfile, objectBase *objectdb)
 	char action_buffer[LINE_BUFFER_SIZE] = { 0 };
 	char action_parameter_buffer[LINE_BUFFER_SIZE] = { 0 };
 	int removeable_buffer = 0;
+	int hitpoints_buffer = 0;
 	
 	int object_index = 0;
 	
 	while ( fgets(line_buffer, LINE_BUFFER_SIZE, fp) != NULL ) {
-		sscanf(line_buffer, "%50[^|]|%50[^|]|%50[^|]|%d|%50[^|]|%50[^|\n]", id_buffer, name_buffer, description_buffer, &removeable_buffer, action_buffer, action_parameter_buffer);
+		sscanf(line_buffer, "%50[^|]|%50[^|]|%50[^|]|%d|%d|%50[^|]|%50[^|\n]", id_buffer, name_buffer, description_buffer, &removeable_buffer, &hitpoints_buffer, action_buffer, action_parameter_buffer);
 		//description_buffer[strlen(description_buffer) - 1] = 0; /* Remove newline */
 		strncpy(objectdb->objects[object_index].id, id_buffer, ID_LENGTH);
 		strncpy(objectdb->objects[object_index].name, name_buffer, NAME_LENGTH);
@@ -203,6 +204,7 @@ void load_objects_file(const char *objectsfile, objectBase *objectdb)
 		strncpy(objectdb->objects[object_index].action, action_buffer, ID_LENGTH);
 		strncpy(objectdb->objects[object_index].action_parameter, action_parameter_buffer, ID_LENGTH);
 		objectdb->objects[object_index].removeable = removeable_buffer;		
+		objectdb->objects[object_index].hitpoints = hitpoints_buffer;
 		
 		memset(line_buffer, '\0', LINE_BUFFER_SIZE);
 		memset(id_buffer, '\0', LINE_BUFFER_SIZE);
@@ -210,6 +212,8 @@ void load_objects_file(const char *objectsfile, objectBase *objectdb)
 		memset(description_buffer, '\0', LINE_BUFFER_SIZE);
 		memset(action_buffer, '\0', LINE_BUFFER_SIZE);
 		memset(action_parameter_buffer, '\0', LINE_BUFFER_SIZE);
+		hitpoints_buffer = 0;
+		removeable_buffer = 0;
 	
 		object_index++;
 	}
@@ -292,7 +296,7 @@ void list_object_info(objectBase *objectdb)
 	printf("=====OBJECTS LISTING=====\n");
 	for(i=0; i<objectdb->nobjects; i++)
 	{
-		printf("ID: \"%s\"; Name \"%s\"; Description \"%s\"; Removeable \"%d\"\n", objectdb->objects[i].id, objectdb->objects[i].name, objectdb->objects[i].description, objectdb->objects[i].removeable); 
+		printf("ID: \"%s\"; Name \"%s\"; Description \"%s\"; Removeable \"%d\"; Hitpoints \"%d\"\n", objectdb->objects[i].id, objectdb->objects[i].name, objectdb->objects[i].description, objectdb->objects[i].removeable, objectdb->objects[i].hitpoints); 
 		printf("Object action: \"%s\"; Action parameter: \"%s\"\n", objectdb->objects[i].action, objectdb->objects[i].action_parameter);
 	}
 	printf("=====END OF OBJECTS LISTING=====\n");
