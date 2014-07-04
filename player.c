@@ -36,8 +36,6 @@ void start_game(playerType *player, roomBase *roomdb, objectBase *objectdb, enem
 		
 	while( ! player->quit )
 	{
-		//printf("command=\"%s\" parameter=\"%s\"\n", input_command, input_parameter);
-		//take_object("Spigot", player, objectdb);
 		input_size = player_input(player, input_command, input_parameter);
 		
 		if( COMP_STR(input_command, "exit") || COMP_STR(input_command, "quit") || feof(stdin) ) {
@@ -306,6 +304,7 @@ void start_enemy_battle(playerType *player, objectBase *objectdb, enemyBase *ene
 	for(i=0; i<fighting_ground->n_enemy_ids; i++)
 	{
 		current_enemy = get_enemy_from_id(fighting_ground->enemy_ids[i], enemydb);
+		if( current_enemy == NULL ) return;
 		printf("A %s approaches you for a fight.\n", current_enemy->name);
 		printf("It is %s\n", current_enemy->description);
 		while( ! enemy_dead(current_enemy) ) {
@@ -357,7 +356,9 @@ void start_enemy_battle(playerType *player, objectBase *objectdb, enemyBase *ene
 			
 			if( player->health <= 0 )
 			{
-				printf("You have died!\n");
+				printf("%s", COLOUR_RED);
+				printf("You have died!");
+				printf("%s\n", COLOUR_NONE);
 				player->quit = 1;
 				goto LEAVE_BATTLE;
 			}

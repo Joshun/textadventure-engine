@@ -21,6 +21,11 @@ void tokenise_room_objects(char *str, roomType *room)
 	CLR_BUFF(newstr);
 	i++;
 	
+	if( newstr[0] == '0' ) {
+		room->n_object_ids = 0;
+		return;
+	}
+	
 	while( (newstr = strtok(NULL, ",")) ) {
 		newstr[strlen(newstr)] = 0;
 		strncpy(room->object_ids[i], newstr, ID_LENGTH);
@@ -37,6 +42,11 @@ void tokenise_room_enemies(char *str, roomType *room)
 	newstr[strlen(newstr)] = 0;
 	strncpy(room->enemy_ids[i], newstr, ID_LENGTH);
 	i++;
+	
+	if( newstr[0] == '0' ) {
+		room->n_enemy_ids = 0;
+		return;
+	}
 	
 	while( (newstr = strtok(NULL, ",")) ) {
 		newstr[strlen(newstr)] = 0;
