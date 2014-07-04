@@ -1,4 +1,6 @@
 KEY|key|An old rusty key|1|10|ULOCK|KTCHN
 LIGHT|light switch|Turns light on and off|0|0|0|0
 SPIGT|spigot|A tap for a barrel|1|1|0|0
-TOYCR|toy car|A toy hotwheels car|1|5|0|0
+TOYCR|toy car|A toy hotwheels car|1|45|0|0
+KNIFE|knife|a sharp, blood-stained carving knife|1|0|0|0
+APPLE|apple|a ripe, juicy apple|1|0|HEAL|30

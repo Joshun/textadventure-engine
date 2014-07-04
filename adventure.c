@@ -9,12 +9,6 @@
 
 #define PATH_BUF_SIZE 100
 
-void throw_error(const char *error_str)
-{
-	printf("Error: %s\n", error_str);
-	exit(EXIT_FAILURE);
-}
-
 void parse_args(int argc, char **argv, char *dpathbuf)
 {
 	debug = 0;
@@ -48,20 +42,23 @@ int main(int argc, char **argv)
 	
 	roomBase rooms;
 	objectBase objects;
+	enemyBase enemies;
 	playerType player;
 	load_map_file("datafiles/map.data", &rooms);
 	//list_room_objects(&(rooms.rooms[0]));
 	//list_room_dependency_objects(&(rooms.rooms[1]));
 	load_rooms_file("datafiles/rooms.data", &rooms);
 	load_objects_file("datafiles/objects.data", &objects);
+	load_enemies_file("datafiles/enemies.data", &enemies);
 	load_config_file("datafiles/config.data", &player);
 	
 	if( debug ) {
 		list_room_info(&rooms);
 		list_object_info(&objects);
+		list_enemy_info(&enemies);
 	}
 	
-	start_game(&player, &rooms, &objects);
+	start_game(&player, &rooms, &objects, &enemies);
 	
 	return 0;
 }

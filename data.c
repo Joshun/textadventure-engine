@@ -9,23 +9,41 @@
 
 void load_map_file(const char *mapfile, roomBase roomdb[MAX_ROOMS]);
 void tokenise_room_objects(char *str, roomType *room);
-void tokenise_room_dependency_objects(char *str, roomType *room);
+void tokenise_room_enemies(char *str, roomType *room);
 roomType *get_room_from_coordinates(int coordinates[2], roomBase *roomdb);
 
 void tokenise_room_objects(char *str, roomType *room)
 {
 	int i = 0;
 	char *newstr = strtok(str, ",");
-	newstr[ID_LENGTH - 1] = 0;
+	newstr[strlen(newstr)] = 0;
 	strncpy(room->object_ids[i], newstr, ID_LENGTH);
+	CLR_BUFF(newstr);
 	i++;
 	
 	while( (newstr = strtok(NULL, ",")) ) {
-		newstr[ID_LENGTH - 1] = 0;
+		newstr[strlen(newstr)] = 0;
 		strncpy(room->object_ids[i], newstr, ID_LENGTH);
+		CLR_BUFF(newstr);
 		i++;
 	}
 	room->n_object_ids = i;
+}
+
+void tokenise_room_enemies(char *str, roomType *room)
+{
+	int i = 0;
+	char *newstr = strtok(str, ",");
+	newstr[strlen(newstr)] = 0;
+	strncpy(room->enemy_ids[i], newstr, ID_LENGTH);
+	i++;
+	
+	while( (newstr = strtok(NULL, ",")) ) {
+		newstr[strlen(newstr)] = 0;
+		strncpy(room->enemy_ids[i], newstr, ID_LENGTH);
+		i++;
+	}
+	room->n_enemy_ids = i;
 }
 
 void list_room_objects(roomType *room)
@@ -33,6 +51,13 @@ void list_room_objects(roomType *room)
 	int i;
 	for(i=0; i<room->n_object_ids; i++)
 		printf("Room Object ID: %s\n", room->object_ids[i]);
+}
+
+void list_room_enemies(roomType *room)
+{
+	int i;
+	for(i=0; i<room->n_enemy_ids; i++)
+		printf("Room Enemy ID: %s\n", room->enemy_ids[i]);
 }
 
 //void list_room_dependency_objects(roomType *room)
@@ -55,6 +80,10 @@ void list_room_info(roomBase *roomdb)
 		printf("Object IDs listing---\n");
 		list_room_objects(&(roomdb->rooms[i]));
 		printf("--end\n");
+		printf("Enemy IDs listing---\n");
+		list_room_enemies(&(roomdb->rooms[i]));
+		printf("--end\n");
+		
 		//printf("Dependency object IDs listing---\n");
 		//list_room_dependency_objects(&(roomdb->rooms[i]));
 		//printf("--end\n");
@@ -72,6 +101,7 @@ void load_map_file(const char *mapfile, roomBase *roomdb)
 	char id_buffer[LINE_BUFFER_SIZE] = { 0 };
 	int coordinates_buffer[2];
 	char object_ids_buffer[LINE_BUFFER_SIZE] = { 0 };
+	char enemy_ids_buffer[LINE_BUFFER_SIZE] = { 0 };
 	//char dependency_object_ids_buffer[LINE_BUFFER_SIZE] = { 0 };
 	int locked_buffer;	
 	
@@ -79,8 +109,9 @@ void load_map_file(const char *mapfile, roomBase *roomdb)
 	
 	while ( fgets(line_buffer, LINE_BUFFER_SIZE, fp) != NULL ) {
 		//sscanf(line_buffer, "%50[^|]|%d,%d|%50[^|]|%50[^|]", id_buffer, &coordinates_buffer[0], &coordinates_buffer[1], object_ids_buffer, dependency_object_ids_buffer);
-		sscanf(line_buffer, "%50[^|]|%d,%d|%50[^|]|%d", id_buffer, &coordinates_buffer[0], &coordinates_buffer[1], object_ids_buffer, &locked_buffer);
+		sscanf(line_buffer, "%50[^|]|%d,%d|%50[^|]|%50[^|]|%d", id_buffer, &coordinates_buffer[0], &coordinates_buffer[1], object_ids_buffer, enemy_ids_buffer, &locked_buffer);
 		tokenise_room_objects(object_ids_buffer, &(roomdb->rooms[room_index]));
+		tokenise_room_enemies(enemy_ids_buffer, &(roomdb->rooms[room_index]));
 		//tokenise_room_dependency_objects(dependency_object_ids_buffer, &(roomdb->rooms[room_index]));
 		strncpy(roomdb->rooms[room_index].id, id_buffer, ID_LENGTH);
 		roomdb->rooms[room_index].coordinates[0] = coordinates_buffer[0];
@@ -283,6 +314,27 @@ void remove_object_from_room(objectType *object, roomType *room)
 	}
 }
 
+void remove_object_from_inventory(objectType *object, playerType *player)
+{
+	if( object_in_inventory(object, player) )
+	{
+		int i, j;
+		for(i=0; i<player->n_object_ids; i++)
+		{
+			if( strcmp(player->inventory[i], object->id) == 0)
+			{
+				//printf("Removing object with id: %s\n", room->object_ids[i]);
+				for(j=i; (j+1)<player->n_object_ids; j++) {
+					//printf("ID: %s\n", room->object_ids[j]);
+					strncpy(player->inventory[j], player->inventory[j+1], ID_LENGTH);
+				}
+				player->n_object_ids -= 1;
+				return;
+			}
+		}
+	}
+}
+
 void list_object_info(objectBase *objectdb)
 {
 	int i;
@@ -296,6 +348,67 @@ void list_object_info(objectBase *objectdb)
 
 }
 
+void load_enemies_file(const char *enemyfile, enemyBase *enemydb)
+{
+	FILE *fp = NULL;
+	if ( (fp = fopen(enemyfile, "r")) == NULL )
+		throw_error("could not open enemies file");
+		
+	char line_buffer[LINE_BUFFER_SIZE] = { 0 };
+	char id_buffer[LINE_BUFFER_SIZE] = { 0 };
+	char name_buffer[LINE_BUFFER_SIZE] = { 0 };
+	char description_buffer[LINE_BUFFER_SIZE] = { 0 };
+	int health_buffer = 0;
+	int damage_buffer = 0;
+	
+	int enemy_index = 0;
+	
+	while ( fgets(line_buffer, LINE_BUFFER_SIZE, fp) != NULL ) {
+		sscanf(line_buffer, "%50[^|]|%50[^|]|%50[^|]|%d|%d", id_buffer, name_buffer, description_buffer, &health_buffer, &damage_buffer);
+		
+		strncpy(enemydb->enemies[enemy_index].id, id_buffer, ID_LENGTH);
+		strncpy(enemydb->enemies[enemy_index].name, name_buffer, NAME_LENGTH);
+		strncpy(enemydb->enemies[enemy_index].description, description_buffer, DESCRIPTION_LENGTH);
+		enemydb->enemies[enemy_index].health = health_buffer;
+		enemydb->enemies[enemy_index].damage = damage_buffer;
+	
+		enemy_index++;
+		
+		CLR_BUFF(line_buffer);
+		CLR_BUFF(id_buffer);
+		CLR_BUFF(name_buffer);
+		CLR_BUFF(description_buffer);
+		health_buffer = 0;
+		damage_buffer = 0;
+	}
+	
+	enemydb->nenemies = enemy_index;
+	fclose(fp);
+}
+
+void list_enemy_info(enemyBase *enemydb)
+{
+	int i;
+	printf("=====ENEMIES LISTING=====\n");
+	for(i=0; i<enemydb->nenemies; i++)
+	{
+		printf("ID: \"%s\"; Name \"%s\"; Description \"%s\"; Damage \"%d\"; Health \"%d\"\n", enemydb->enemies[i].id, enemydb->enemies[i].name, enemydb->enemies[i].description, enemydb->enemies[i].damage, enemydb->enemies[i].health); 
+	}
+	printf("=====END OF ENEMIES LISTING=====\n");
+}
+
+enemyType *get_enemy_from_id(const char *enemy_id, enemyBase *enemydb)
+{
+	int i;
+	for(i=0; i<enemydb->nenemies; i++)
+	{
+		if( (strcmp(enemydb->enemies[i].id, enemy_id)) == 0 ) {
+			//printf("Room \"%s\" found\n", room_id);
+			return &(enemydb->enemies[i]);
+		}
+	}
+	return NULL;
+}
 
 void load_config_file(const char *configfile, playerType *config)
 {
