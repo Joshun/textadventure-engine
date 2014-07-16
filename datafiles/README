@@ -3,7 +3,7 @@ Format for datafiles
 
 map.data
 --------
-room ID | room coordinates | room objects | locked status
+room ID | room coordinates | room objects | room enemies | locked status
 
 rooms.data
 ----------
@@ -11,7 +11,11 @@ room ID | room name | room description
 
 objects.data
 ------------
-object ID | object name | object description | object action | action parameter
+object ID | object name | object description | object hitpoints | object action | action parameter
+
+enemies.data
+------------
+enemy ID | enemy name | enemy description | enemy damage | starting health
 
 config.data
 -----------

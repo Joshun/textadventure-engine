@@ -1,14 +1,18 @@
 void load_map_file(const char *mapfile, roomBase roomdb[MAX_ROOMS]);
 void load_rooms_file(const char *roomfile, roomBase *roomdb);
 void load_objects_file(const char *objectsfile, objectBase *objectdb);
+void load_enemies_file(const char *enemyfile, enemyBase *enemydb);
 void load_config_file(const char *configfile, playerType *config);
 void list_room_objects(roomType *room, objectBase *objectdb);
 void list_room_info(roomBase *roomdb);
 void list_object_info(objectBase *objectdb);
+void list_enemy_info(enemyBase *enemydb);
 roomType *get_room_from_id(const char *room_id, roomBase *roomdb);
 roomType *get_room_from_coordinates(int coordinates[2], roomBase *roomdb);
 objectType *get_object_from_id(const char *object_id, objectBase *objectdb);
 objectType *get_object_from_name(const char *object_name, objectBase *objectdb);
+enemyType *get_enemy_from_id(const char *enemy_id, enemyBase *enemydb);
 int object_in_room(objectType *object, roomType *room);
 int object_in_inventory(objectType *object, playerType *player);
 void remove_object_from_room(objectType *object, roomType *room);
+void remove_object_from_inventory(objectType *object, playerType *player);
