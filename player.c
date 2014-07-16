@@ -15,7 +15,7 @@ void go_to_room(playerType *player, roomBase *roomdb, int coordinates[2], object
 void take_object(const char *object_name, playerType *player, objectBase *objectdb);
 void no_entry(void);
 void examine_object(char *object_name, playerType *player, objectBase *objectdb);
-void use_object(char *object_name, playerType *player, objectBase *objectdb, roomBase *roomdb);
+void use_object(char *object_name, playerType *player, objectBase *objectdb, roomBase *roomdb, enemyBase *enemydb);
 void start_enemy_battle(playerType *player, objectBase *objectdb, enemyBase *enemydb);
 void heal_player(playerType *player, int hpoints);
 
@@ -58,7 +58,7 @@ void start_game(playerType *player, roomBase *roomdb, objectBase *objectdb, enem
 			take_object(input_parameter, player, objectdb);
 		}
 		else if( COMP_STR(input_command, "use" ) ) {
-			use_object(input_parameter, player, objectdb, roomdb);
+			use_object(input_parameter, player, objectdb, roomdb, enemydb);
 		}
 		else if( COMP_STR(input_command, "north" ) ) {
 			test_coordinates[0] = player->coordinates[0];
@@ -247,7 +247,7 @@ void heal_player(playerType *player, int hpoints)
 	printf("The object heals you: Player HP %d\n", player->health);
 }
 		
-void use_object(char *object_name, playerType *player, objectBase *objectdb, roomBase *roomdb)
+void use_object(char *object_name, playerType *player, objectBase *objectdb, roomBase *roomdb, enemyBase *enemydb)
 {
 	if( strlen(object_name) < 1 ) {
 		printf("Use what?\n");
@@ -271,6 +271,14 @@ void use_object(char *object_name, playerType *player, objectBase *objectdb, roo
 		else if( COMP_STR(temp_object->action, "HEAL") ) {
 			heal_player(player, atoi(temp_object->action_parameter));
 			remove_object_from_inventory(temp_object, player);
+		}
+		else if( COMP_STR(temp_object->action, "TELEP") ) {
+			int coordinates[2] = { 0, 0 };
+			const char *room_id = temp_object->action_parameter;
+			roomType *temp_room = get_room_from_id(room_id, roomdb);
+			coordinates[0] = temp_room->coordinates[0];
+			coordinates[1] = temp_room->coordinates[1];
+			go_to_room(player, roomdb, coordinates, objectdb, enemydb);
 		}
 		else {
 			printf("Error: invalid object action \"%s\"\n", temp_object->action);
