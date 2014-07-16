@@ -108,16 +108,18 @@ void show_room_content(roomType *room, objectBase *objectdb)
 		return;
 	}
 	printf("You are in the %s.\n%s\n", room->name, room->description);
-	printf("You see the following objects:\n");
-	int i;
-	objectType *current_object;
-	for(i=0; i<room->n_object_ids; i++) {
-		current_object = get_object_from_id(room->object_ids[i], objectdb);
-		if( current_object ) {
-			if( (i + 1) != room->n_object_ids )
-				printf("%s, ", current_object->name);
-			else
-				printf("%s\n", current_object->name);
+	if( room->n_object_ids > 0 ) {
+		printf("You see the following objects:\n");
+		int i;
+		objectType *current_object;
+		for(i=0; i<room->n_object_ids; i++) {
+			current_object = get_object_from_id(room->object_ids[i], objectdb);
+			if( current_object ) {
+				if( (i + 1) != room->n_object_ids )
+					printf("%s, ", current_object->name);
+				else
+					printf("%s\n", current_object->name);
+			}
 		}
 	}
 }
